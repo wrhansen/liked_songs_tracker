@@ -1,0 +1,5 @@
+.env
+.mypy_cache/
+.python-version
+*.json
+
