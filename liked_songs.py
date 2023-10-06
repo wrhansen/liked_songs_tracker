@@ -120,13 +120,13 @@ def add_new_songs(new_songs, database_id, notion_version, notion_api_key):
                             {
                                 "type": "text",
                                 "text": {
-                                    "content": song["duration"],
+                                    "content": song.get("duration", ""),
                                     "link": None,
                                 },
                             }
                         ]
                     },
-                    "duration_seconds": {"number": song["duration_seconds"]},
+                    "duration_seconds": {"number": song.get("duration_seconds", 0)},
                     "video_id": {
                         "rich_text": [
                             {
