@@ -1,3 +1,4 @@
+import json
 import logging
 import os
 import sys
@@ -97,9 +98,11 @@ def add_new_songs(new_songs, database_id, notion_version, notion_api_key):
                             {
                                 "type": "text",
                                 "text": {
-                                    "content": song.get("album", {}).get("name", "")
-                                    if song["album"]
-                                    else "",
+                                    "content": (
+                                        song.get("album", {}).get("name", "")
+                                        if song["album"]
+                                        else ""
+                                    ),
                                     "link": None,
                                 },
                             }
@@ -157,7 +160,8 @@ def add_new_songs(new_songs, database_id, notion_version, notion_api_key):
 
 def main(args):
     logger.info("Retrieving liked songs playlist from YouTube...")
-    liked_songs = retrieve_liked_songs_list(YOUTUBE_OAUTH_JSON)
+    auth_json = json.loads(YOUTUBE_OAUTH_JSON)
+    liked_songs = retrieve_liked_songs_list(auth_json)
     logger.debug(f"Payload: {liked_songs}")
     logger.info(f"Success. Found {len(liked_songs['tracks'])} songs.")
 
