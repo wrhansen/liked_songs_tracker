@@ -5,18 +5,26 @@ import sys
 
 import requests
 from ytmusicapi import YTMusic
+from ytmusicapi.auth.oauth import OAuthCredentials
 
 NOTION_API_KEY = os.environ["NOTION_API_KEY"]
 NOTION_DATABASE_ID = os.environ["NOTION_DATABASE_ID"]
 NOTION_VERSION = "2022-06-28"
 
 YOUTUBE_OAUTH_JSON = os.environ["YOUTUBE_OAUTH_JSON"]
+YOUTUBE_OAUTH_CLIENT_ID = os.environ["YOUTUBE_OAUTH_CLIENT_ID"]
+YOUTUBE_OAUTH_CLIENT_SECRET = os.environ["YOUTUBE_OAUTH_CLIENT_SECRET"]
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("")
 
 
-def retrieve_liked_songs_list(oauth_json):
-    ytmusic = YTMusic(oauth_json)
+def retrieve_liked_songs_list(oauth_json, client_id, client_secret):
+    ytmusic = YTMusic(
+        oauth_json,
+        oauth_credentials=OAuthCredentials(
+            client_id=client_id, client_secret=client_secret
+        ),
+    )
     return ytmusic.get_liked_songs(limit=None)
 
 
@@ -161,7 +169,9 @@ def add_new_songs(new_songs, database_id, notion_version, notion_api_key):
 def main(args):
     logger.info("Retrieving liked songs playlist from YouTube...")
     auth_json = json.loads(YOUTUBE_OAUTH_JSON)
-    liked_songs = retrieve_liked_songs_list(auth_json)
+    liked_songs = retrieve_liked_songs_list(
+        auth_json, YOUTUBE_OAUTH_CLIENT_ID, YOUTUBE_OAUTH_CLIENT_SECRET
+    )
     logger.debug(f"Payload: {liked_songs}")
     logger.info(f"Success. Found {len(liked_songs['tracks'])} songs.")
 
